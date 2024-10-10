@@ -5,6 +5,10 @@
     "spec": {
       "tags":  [
                 {
+                  "name": "Auth",
+                  "description": "To-Do-List會員驗證"
+                },
+                {
                   "name": "To-do-List",
                   "description": "To-Do-List系統"
                 }

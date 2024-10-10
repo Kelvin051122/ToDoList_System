@@ -6,13 +6,14 @@ import {
     Post,
     Query,
     Route,
+    Tags,
     SuccessResponse,
   } from "tsoa";
 import { provideSingleton } from "../utils/provideSingleton";
 import { inject } from "inversify";
 import { LoginService } from "./loginService";
 
-
+  @Tags("Auth")
   @Route("auth")
   @provideSingleton(LoginController)
   export class LoginController{
