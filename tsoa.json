@@ -3,6 +3,12 @@
     "noImplicitAdditionalProperties": "throw-on-extras",
     "controllerPathGlobs": ["src/**/*Controller.ts"],
     "spec": {
+      "tags":  [
+                {
+                  "name": "To-do-List",
+                  "description": "To-Do-List系統"
+                }
+              ],
       "outputDirectory": "build",
       "specVersion": 3
     },
