@@ -9,7 +9,7 @@ import {
     Tags,
     SuccessResponse,
     Request,
-    RequestProp,
+    Example
   } from "tsoa";
 import { provideSingleton } from "../utils/provideSingleton";
 import { inject } from "inversify";
@@ -25,6 +25,9 @@ import { request } from "express";
     ) {
         
     }
+    @Example<object>({"message":"user doesn't exist"})
+    @Example<object>({"message":"password incorrect"})
+    @Example<object>({"message":"Login successful"})
     @Post()
     public async authPOST(@Body() requestBody:AuthPostInterface, @Request() request: any):Promise<any>{
       const userName = (await this._db.getMembers()).filter(e=>e.userName===requestBody.userName)[0]
@@ -33,7 +36,7 @@ import { request } from "express";
       const password = userName.password
       if(requestBody.password!==password)
         return{"message":"password incorrect"}
-      request.session.userInfo = {isLogined:true}
+      request.session.userInfo = {isLogined:true,permissions:userName.permissions}
       return{"message":"Login successful"}
     }
 
@@ -48,6 +51,7 @@ import { request } from "express";
     ) {
         
     }
+    @Example<object>({message:"Logout successful"})
     @Get()
     public async Logout(@Request() request: any):Promise<any>{
       request.session.destroy();

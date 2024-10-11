@@ -1,9 +1,19 @@
-import { Get,Route,Tags,Post,Body,Path,Example,Delete } from "tsoa";
+import { Get,Route,Tags,Post,Body,Path,Example,Delete,Middlewares,TsoaResponse,Res} from "tsoa";
 import { provideSingleton } from "../utils/provideSingleton";
 import { inject } from "inversify";
 import { TodoService,TodoPreview } from "./TodoService";
 import { TodoLists } from "../entity/TodoList";
 import { DeleteResult, InsertResult, UpdateResult } from "typeorm";
+import { Request, Response, NextFunction } from "express";
+const AdminMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    // 在這裡進行請求的驗證或處理
+    if(req.session.userInfo.permissions!=="Admin")
+        return res.json({"message":"You don't have permission"})
+    next(); // 繼續到下一個中介軟體或路由處理
+};
+interface ValidateErrorJSON {
+    message: string;
+}
 @Route("to-do-list")
 @Tags("To-do-List")
 @provideSingleton(TodoController)
@@ -19,11 +29,28 @@ export class TodoController{
             data: await this._db.getTodoLists(),
         }
     }
+
+    @Example<TodoLists>({
+        "to_do_id" : 4,
+		"subject" : "下午茶哩wadwa",
+		"reserved_time" : "2021-06-09 12:04",
+		"modified_time" : "2024-08-17 00:35:25",
+		"brief" : "50嵐跟可不可 , 到底要哪個",
+		"level" : 8,
+		"author" : "老K",
+		"content" : "50嵐外帶20杯 7折 , 可不可每zxczcxvcbdasdawadas , 可wadasdxzx心 , 有人要跳巢的嗎！？",
+		"attachments" : ["null"]
+    })
     @Get('detail/{TodoID}')
-    public async getTodoByID(@Path() TodoID: number){
+    public async getTodoByID(@Path() TodoID: number, @Res() notFoundResponse: TsoaResponse<404, { message: "找不到對應ToDo" }>){
+        const data = await this._db.getTodoByID(TodoID);
+        if (!data[0])
+            return notFoundResponse(404, {message:"找不到對應ToDo"});
         return await this._db.getTodoByID(TodoID)
     }
+    
     /**
+     * @summary 需權限. 
      * @param requestBody Description for the request body object
      * @example requestBody {
      *   "subject" : "唷唷",
@@ -69,19 +96,26 @@ export class TodoController{
         ]
     })
     @Post('detail/{TodoID}')
+    @Middlewares(AdminMiddleware)
     public async AddTodo(@Body() requestBody:TodoLists,@Path() TodoID: number): Promise<any>{
         const data = await this._db.getTodoByID(TodoID)
         if(!data[0])
             return await this._db.AddTodo(requestBody)
         return await this._db.UpdateTodo(TodoID,requestBody)
     }
-
+    /**
+     * @summary 需權限.
+     */
     @Delete('detail/{TodoID}')
+    @Middlewares(AdminMiddleware)
     public async deleteTodo(@Path() TodoID: number): Promise<DeleteResult>{
         return await this._db.deleteTodo(TodoID)
     }
-
+    /**
+     * @summary 需權限.
+     */
     @Get('the-newest-id')
+    @Middlewares(AdminMiddleware)
     public async getNewestID():Promise<number>{
         return await this._db.getNewestID()
     }
