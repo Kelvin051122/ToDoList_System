@@ -9,6 +9,10 @@
                   "description": "To-Do-List會員驗證"
                 },
                 {
+                  "name": "logout",
+                  "description": "登出機制"
+                },
+                {
                   "name": "To-do-List",
                   "description": "To-Do-List系統"
                 }

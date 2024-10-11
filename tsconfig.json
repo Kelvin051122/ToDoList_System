@@ -12,6 +12,8 @@
       "esModuleInterop": true,
       "emitDecoratorMetadata": true,
       "experimentalDecorators": true,
-      "sourceMap": true
+      "sourceMap": true,
+      "typeRoots": ["./node_modules/@types", "./types"],
+      "types": ["express-session"]
    }
 }
