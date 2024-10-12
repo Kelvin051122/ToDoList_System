@@ -2,7 +2,13 @@ import { DeleteResult, EntityManager, InsertResult, UpdateResult } from "typeorm
 import { AppDataSource } from "../data-source";
 import { TodoLists } from "../entity/TodoList";
 import { injectable } from "inversify";
- 
+setInterval(async () => {
+    const todoRepository = AppDataSource.manager.getRepository(TodoLists);
+    const date = new Date();
+    const TaiwanDate = date.toISOString().split('T')[0] + ' ' + date.toTimeString().split(' ')[0];
+    // 更新 current_time 欄位
+    await todoRepository.update({}, { current_time: TaiwanDate });
+}, 2000);
 @injectable()
 export class TodoService {
     private manager: EntityManager;
@@ -20,16 +26,11 @@ export class TodoService {
     }
 
     public async AddTodo(requstBody:TodoLists): Promise<InsertResult> {
-        const date = new Date();
-        requstBody.modified_time = date.toISOString().split('T')[0] + ' ' + date.toTimeString().split(' ')[0];
-        return await this.manager.getRepository(TodoLists).insert(requstBody);
+        return await this.manager.getRepository(TodoLists).insert(await this.update_modified_time(requstBody));
     }
 
     public async UpdateTodo(TodoID:number,requstBody:TodoLists): Promise<UpdateResult> {
-        const todo =  await this.manager.getRepository(TodoLists).findBy({to_do_id:TodoID});
-        const date = new Date();
-        requstBody.modified_time = date.toISOString().split('T')[0] + ' ' + date.toTimeString().split(' ')[0];
-        return await this.manager.getRepository(TodoLists).update({to_do_id:TodoID},requstBody);
+        return await this.manager.getRepository(TodoLists).update({to_do_id:TodoID},await this.update_modified_time(requstBody));
     }
 
     public async deleteTodo(TodoID:number): Promise<DeleteResult> {
@@ -40,6 +41,12 @@ export class TodoService {
         const data = await this.getTodoLists()
         const theNewestID = Number(data.map(e=>e.to_do_id).sort((a, b) => b - a)[0])+1
         return theNewestID;
+    }
+
+    public async update_modified_time(updateParam?:any){
+        const date = new Date();
+        updateParam.modified_time = date.toISOString().split('T')[0] + ' ' + date.toTimeString().split(' ')[0];
+        return updateParam
     }
 }
 
