@@ -12,8 +12,7 @@ export class TodoService {
     }
  
     public async getTodoLists(): Promise<TodoLists[]> {
-        const result = await this.manager.getRepository(TodoLists).find();
-        return result;
+        return await this.manager.getRepository(TodoLists).find();
     }
 
     public async getTodoByID(TodoID:number): Promise<TodoLists[]> {
@@ -21,10 +20,15 @@ export class TodoService {
     }
 
     public async AddTodo(requstBody:TodoLists): Promise<InsertResult> {
+        const date = new Date();
+        requstBody.modified_time = date.toISOString().split('T')[0] + ' ' + date.toTimeString().split(' ')[0];
         return await this.manager.getRepository(TodoLists).insert(requstBody);
     }
 
     public async UpdateTodo(TodoID:number,requstBody:TodoLists): Promise<UpdateResult> {
+        const todo =  await this.manager.getRepository(TodoLists).findBy({to_do_id:TodoID});
+        const date = new Date();
+        requstBody.modified_time = date.toISOString().split('T')[0] + ' ' + date.toTimeString().split(' ')[0];
         return await this.manager.getRepository(TodoLists).update({to_do_id:TodoID},requstBody);
     }
 
@@ -39,13 +43,3 @@ export class TodoService {
     }
 }
 
-export interface TodoPreview {
-    subject: string;
-    reserved_time: string;
-    modified_time: string;
-    brief: string;
-    level: number;
-    author: string;
-    content: string;
-    attachments: string[]; // attachments 應該是數組
-}  

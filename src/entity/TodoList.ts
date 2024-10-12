@@ -12,8 +12,8 @@ export class TodoLists {
     @Column()
     reserved_time: string
 
-    @Column()
-    modified_time: string
+    @Column({type: 'varchar', length: 255, default: () => 'CURRENT_TIMESTAMP'})
+    modified_time?: string
 
     @Column()
     brief: string

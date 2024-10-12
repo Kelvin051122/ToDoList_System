@@ -2,6 +2,7 @@ import express, { json, urlencoded, Response as ExResponse, Request as ExRequest
 import swaggerUi from "swagger-ui-express";
 import { RegisterRoutes } from "../build/routes";
 import session from 'express-session';
+
 declare module 'express-session' {
   interface SessionData {
     userInfo?: { userName: string; password: string; permissions:string };

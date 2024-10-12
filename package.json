@@ -12,6 +12,7 @@
       "express-session": "^1.18.1",
       "inversify": "^6.0.2",
       "inversify-binding-decorators": "^4.0.0",
+      "moment-timezone": "^0.5.46",
       "pg": "^8.4.0",
       "redis": "^4.7.0",
       "reflect-metadata": "^0.1.13",
