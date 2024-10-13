@@ -5,7 +5,21 @@ import { TodoService} from "./TodoService";
 import { TodoLists } from "../entity/TodoList";
 import { DeleteResult, InsertResult, UpdateResult } from "typeorm";
 import { Request, Response, NextFunction } from "express";
+import session from 'express-session';
 
+declare module 'express-session' {
+  interface SessionData {
+    userInfo?: { userName: string; password: string; permissions:string };
+  }
+}
+
+const isLoginedMiddleware = (req: Request& { session: session.SessionData }, res: Response, next: NextFunction) => {
+    if (!req.session.userInfo) {
+        res.json({ "message": "未登入" });
+        return
+    }
+    next();
+};
 const AdminMiddleware = (req: Request, res: Response, next: NextFunction) => {
     // 在這裡進行請求的驗證或處理
     if(req.session.userInfo.permissions!=="Admin")
@@ -22,6 +36,7 @@ export class TodoController{
     ) {}
     
     @Get('list')
+    @Middlewares(isLoginedMiddleware)
     public async getTodoLists(){
         return {
             status: true,
@@ -42,6 +57,7 @@ export class TodoController{
 		"attachments" : ["null"]
     })
     @Get('detail/{TodoID}')
+    @Middlewares(isLoginedMiddleware)
     public async getTodoByID(@Path() TodoID: number, @Res() notFoundResponse: TsoaResponse<404, { message: "找不到對應ToDo" }>){
         const data = await this._db.getTodoLists()
         const ida = data.map(e=>e.to_do_id)
@@ -97,7 +113,7 @@ export class TodoController{
         ]
     })
     @Post('detail/{TodoID}')
-    @Middlewares(AdminMiddleware)
+    @Middlewares([isLoginedMiddleware, AdminMiddleware])
     public async AddTodo(@Body() requestBody:TodoLists,@Path() TodoID: number): Promise<any>{
         const data = await this._db.getTodoLists()
         const ida = data.map(e=>e.to_do_id)
@@ -109,7 +125,7 @@ export class TodoController{
      * @summary 需權限.
      */
     @Delete('detail/{TodoID}')
-    @Middlewares(AdminMiddleware)
+    @Middlewares([isLoginedMiddleware, AdminMiddleware])
     public async deleteTodo(@Path() TodoID: number): Promise<DeleteResult>{
         return await this._db.deleteTodo(TodoID)
     }
@@ -117,7 +133,7 @@ export class TodoController{
      * @summary 需權限.
      */
     @Get('the-newest-id')
-    @Middlewares(AdminMiddleware)
+    @Middlewares([isLoginedMiddleware, AdminMiddleware])
     public async getNewestID():Promise<number>{
         return await this._db.getNewestID()
     }

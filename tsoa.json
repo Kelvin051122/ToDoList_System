@@ -5,12 +5,16 @@
     "spec": {
       "tags":  [
                 {
-                  "name": "Auth",
-                  "description": "To-Do-List會員驗證"
+                  "name": "Login",
+                  "description": "登入機制"
                 },
                 {
-                  "name": "logout",
+                  "name": "Logout",
                   "description": "登出機制"
+                },
+                {
+                  "name": "Register",
+                  "description": "註冊機制"
                 },
                 {
                   "name": "To-do-List",

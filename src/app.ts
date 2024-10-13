@@ -3,11 +3,7 @@ import swaggerUi from "swagger-ui-express";
 import { RegisterRoutes } from "../build/routes";
 import session from 'express-session';
 
-declare module 'express-session' {
-  interface SessionData {
-    userInfo?: { userName: string; password: string; permissions:string };
-  }
-}
+
 const redis = require('redis');
 const redisClient = redis.createClient();
 const redisStore = require('connect-redis').default;
@@ -34,12 +30,7 @@ app.use(session({
     secure: false,  // Set to `true` if using https
   },
 }))
-app.use('/to-do-list', (req:ExRequest& { session: session.SessionData }, res:ExResponse, next: NextFunction):void => {
-  if (!req.session.userInfo) {
-    res.json({ "message": "未登入" });
-  }
-  next();
-});
+
 app.use("/docs", swaggerUi.serve, async (_req: ExRequest, res: ExResponse):Promise<void> => {
     res.send(
       swaggerUi.generateHTML(await import("../build/swagger.json"))
