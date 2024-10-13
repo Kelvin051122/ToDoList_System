@@ -5,10 +5,16 @@ import { injectable } from "inversify";
 setInterval(async () => {
     const todoRepository = AppDataSource.manager.getRepository(TodoLists);
     const date = new Date();
-    const TaiwanDate = date.toISOString().split('T')[0] + ' ' + date.toTimeString().split(' ')[0];
+    const TaiwanDate = date.toISOString().split('T')[0] + ' ' + date.toTimeString().split(' ')[0].split(':').slice(0, 2).join(':');
     // 更新 current_time 欄位
     await todoRepository.update({}, { current_time: TaiwanDate });
-}, 2000);
+
+    const unfinishedData = await todoRepository.findBy({isFinished:"false",reserved_time:TaiwanDate})
+    if(unfinishedData[0]){
+        console.log('action')
+        await todoRepository.update({reserved_time:TaiwanDate}, { isFinished: "notifying" });
+    }
+}, 500);
 @injectable()
 export class TodoService {
     private manager: EntityManager;
@@ -45,7 +51,7 @@ export class TodoService {
 
     public async update_modified_time(updateParam?:any){
         const date = new Date();
-        updateParam.modified_time = date.toISOString().split('T')[0] + ' ' + date.toTimeString().split(' ')[0];
+        updateParam.modified_time = date.toISOString().split('T')[0] + ' ' + date.toTimeString().split(' ')[0].split(':').slice(0, 2).join(':');
         return updateParam
     }
 }

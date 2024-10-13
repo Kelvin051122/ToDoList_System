@@ -30,6 +30,9 @@ export class TodoLists {
     @Column()
     content: string
 
+    @Column({default:()=>"false"})
+    isFinished?: string
+
     @Column('simple-array')
     attachments:string[]
 }
