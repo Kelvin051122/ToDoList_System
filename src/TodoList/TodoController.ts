@@ -60,6 +60,7 @@ export class TodoController{
      *   "level" : 9,
      *   "author" : "阿麟",
      *   "content" : "dewfwewewf",
+     *   "isFinished":"false",
      *   "attachments" : ["null"]
      * }
      * @example requestBody {
@@ -68,6 +69,7 @@ export class TodoController{
      *   "brief" : "50嵐跟可不可 , 到底要哪個",
      *   "level" : 8,
      *   "author" : "老K",
+     *   "isFinished":"false",
      *   "content" : "50嵐外帶20杯 7折 , 可不可每zxczcxvcbdasdawadas , 可wadasdxzx心 , 有人要跳巢的嗎！？",
      *   "attachments" : ["null"]
      * }

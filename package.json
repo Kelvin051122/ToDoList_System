@@ -10,6 +10,7 @@
       "connect-redis": "^7.1.1",
       "express": "^4.21.1",
       "express-session": "^1.18.1",
+      "express-ws": "^5.0.2",
       "inversify": "^6.0.2",
       "inversify-binding-decorators": "^4.0.0",
       "moment-timezone": "^0.5.46",
@@ -18,7 +19,9 @@
       "reflect-metadata": "^0.1.13",
       "swagger-ui-express": "^5.0.1",
       "tsoa": "^6.4.0",
-      "typeorm": "0.3.20"
+      "typeorm": "0.3.20",
+      "websocket": "^1.0.35",
+      "ws": "^8.18.0"
    },
    "devDependencies": {
       "@types/express": "^5.0.0",
